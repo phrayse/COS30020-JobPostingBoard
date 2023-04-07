@@ -39,7 +39,11 @@
     $applicationByPost = $_POST["postal"];
     $applicationByEmail = $_POST["email"];
 
-    validate($posID, $title, $description, $closeDate, $positionType, $contractType, $location, $applicationByPost, $applicationByEmail);
+    $valid = validate($posID, $title, $description, $closeDate, $positionType, $contractType, $location, $applicationByPost, $applicationByEmail);
+    if ($valid == TRUE) {
+      echo "valid is true remove before submission";
+    } else {
+      echo "valid is false remove before submission";
   }
 
   // Validate function to make the main body cleaner looking.
