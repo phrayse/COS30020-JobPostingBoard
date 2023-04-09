@@ -54,7 +54,7 @@
   // Validate function to make the main body cleaner looking.
   function validate($posID, $title, $description, $closeDate, $positionType, $contractType, $location, $applicationByPost, $applicationByEmail) {
     $posIDPattern = "/^[P]\d\d\d\d$/";
-    $titlePattern = "/^[a-zA-Z0-9]+[a-zA-Z0-9,.! ]{1,20}$/";
+    $titlePattern = "/^[a-zA-Z0-9][a-zA-Z0-9,.! ]{0,19}$/";
     $closeDatePattern = "/^\d{1,2}\/\d{1,2}\/\d{2}$/";
     $matchCounter = 0;
     
