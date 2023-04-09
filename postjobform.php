@@ -23,7 +23,7 @@
 
 				<!-- Title. Text input type, NOT NULL. Max 20 alphanumeric incl. [ ,.!] -->
 				<p><label>Title:
-					<input id="title" type="text" name="title" pattern="^([a-zA-Z0-9][a-zA-Z0-9,.! ]*){1,20}$" required/>
+					<input id="title" type="text" name="title" pattern="^[a-zA-Z0-9][a-zA-Z0-9,.! ]{0,19}$" required/>
 				</label></p>
 
 				<!-- Description. Text area type, NOT NULL. Max 260 characters -->
