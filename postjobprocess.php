@@ -59,7 +59,7 @@
 			$filename = "../../data/jobposts/jobs.txt";
 			$handle = fopen($filename, "a");
 			// Check posID is unique.
-			if (isUnique($handle, $posID)) {
+			if (isUnique($filename, $posID)) {
 				if (fwrite($handle, $fullJobString)>0) {
 					echo "<p>Listing added.";
 					echo "<br><a href=\"index.php\">Home</a>";
@@ -68,6 +68,7 @@
 					echo "<p><p>Error #09 - failed to create listing.";
 					echo "<br><a href=\"postjobform.php\">Back to form</a></p>";
 				}
+				fclose($filename);
 			} else {
 				echo "<p>Error #08 - position ID already in use.";
 				echo "<br><a href=\"postjobform.php\">Back to form</a></p>";
@@ -134,14 +135,15 @@
 		}
 	}
 	
-	function isUnique($handle, $positionID) {
-		while (! feof($handle)) {
-			$curLine = fgets($handle);
-			if (strncmp($curLine, $positionID, 5) == 0) {
+	// Split the all-jobs-in-one string into individual jobs, then compare the first 5 characters with posID.
+	function isUnique($filename, $positionID) {
+		$bigJobString = file_get_contents($filename);
+		$jobArray = explode("\n", $bigJobString);
+		foreach ($jobArray as $job) {
+			if (strncmp($job, $positionID, 5) == 0) {
 				return FALSE;
 			}
 		}
-		return TRUE;
 	}
   ?>
 </body>
