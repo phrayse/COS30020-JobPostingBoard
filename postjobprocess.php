@@ -28,22 +28,23 @@
   
   if (($applicationByPost == FALSE) && ($applicationByEmail == FALSE)) {
     echo "<h1><strong>Cooked!</strong></h1>";
-    echo "<p>Please ensure an application method has been selected.";
-    echo "<br><a href=\"postjobform.php\">Try again</a></p>;
+    echo "<p>Please ensure all form fields have been filled.";
+    echo "<br><a href=\"postjobform.php\">Try again</a></p>";
   } else {
     // initialise variables from form.
-    $posID = $_POST["posID"];
-    $title = $_POST["title"];
-    $description = htmlspecialchars($_POST["description"]);
-    $closeDate = $_POST["closeDate"];
-    $positionType = $_POST["positionType"];
-    $contractType = $_POST["contractType"];
-    $location = $_POST["location"];
+    $posID = sanitise($_POST["posID"]);
+    $title = sanitise($_POST["title"]);
+    $description = sanitise($_POST["description"]);
+    $closeDate = sanitise($_POST["closeDate"]);
+    $positionType = sanitise($_POST["positionType"]);
+    $contractType = sanitise($_POST["contractType"]);
+    $location = sanitise($_POST["location"]);
     
     // Call validate() to make sure every field meets criteria.
     $valid = validate($posID, $title, $description, $closeDate, $positionType, $contractType, $location, $applicationByPost, $applicationByEmail);
-    if ($valid == FALSE) {
-      echo "valid is false";
+    if ($valid != TRUE) {
+      echo "<p><em>$validateError</em></p>";
+      echo "<p><a href="\jobpostform.php\">Back to form</a></p>"
     } else {
       echo "valid is true";
       
@@ -51,38 +52,62 @@
       // it'll be the filewriting stuff plus checks for unique posID.
   }
 
-  // Validate function to make the main body cleaner looking.
+  // Sanitise() cleans the form inputs.
+	function sanitise($data) {
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
+	}
+  
+  // Validate() to make the main body cleaner looking.
   function validate($posID, $title, $description, $closeDate, $positionType, $contractType, $location, $applicationByPost, $applicationByEmail) {
     $posIDPattern = "/^[P]\d\d\d\d$/";
     $titlePattern = "/^[a-zA-Z0-9][a-zA-Z0-9,.! ]{0,19}$/";
     $closeDatePattern = "/^\d{1,2}\/\d{1,2}\/\d{2}$/";
     $matchCounter = 0;
+		$validateError = "";
     
     if (preg_match($posIDPattern, $posID)) {
       $matchCounter++;
-    }
+    } else {
+			 $validateError .= "<p>Error #01 - position ID invalid</p>";
+		}
     if (preg_match($titlePattern, $title)) {
       $matchCounter++;
-    }
-    if ($description != NULL) {
+    } else {
+			$validateError .= "<p>Error #02 - title invalid</p>";
+		}
+    if (!$description == "") {
       $matchCounter++;
-    }
+    } else {
+			$validateError .= "<p>Error #03 - description invalid</p>";
+		}
     if (preg_match($closeDatePattern, $closeDate)) {
       $matchCounter++;
-    }
-    if ($positionType != NULL) {
+    } else {
+			$validateError .= "<p>Error #04 - close date invalid</p>";
+		}
+    if (($positionType == "fullTime") || ($positionType == "partTime") {
       $matchCounter++;
-    }
-    if ($contractType != NULL) {
+    } else {
+			$validateError .= "<p>Error #05 - position type invalid</p>";
+		}
+    if (($contractType == "fixedTerm") || ($contractType == "ongoing")) {
       $matchCounter++;
-    }
-    if ($location != (("" || NULL))) {
+    } else {
+			$validateError .= "<p>Error #06 - contract type invalid</p>";
+		}
+    if ($location != (("") || (NULL))) {
       $matchCounter++;
-    }
+    } else {
+			$validateError .= "<p>Error #07 - location invalid</p>";
+		}
     if (($matchCounter == 7) && (($applicationByPost == TRUE) || ($applicationByEmail == TRUE))) {
       return true;
     } else {
-      return false;
+			$validateError .= "<p>Validation error</p>";
+      return $validateError;
     }
   }
 
