@@ -68,7 +68,7 @@
 					echo "<p><p>Error #09 - failed to create listing.";
 					echo "<br><a href=\"postjobform.php\">Back to form</a></p>";
 				}
-				fclose($filename);
+				fclose($handle);
 			} else {
 				echo "<p>Error #08 - position ID already in use.";
 				echo "<br><a href=\"postjobform.php\">Back to form</a></p>";
@@ -135,7 +135,7 @@
 		}
 	}
 	
-	// Split the all-jobs-in-one string into individual jobs, then compare the first 5 characters with posID.
+	// Split the all-jobs-in-one string into individual jobs, then compare the first 5 characters of each with posID.
 	function isUnique($filename, $positionID) {
 		$bigJobString = file_get_contents($filename);
 		$jobArray = explode("\n", $bigJobString);
