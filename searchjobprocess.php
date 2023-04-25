@@ -28,7 +28,10 @@
 			echo "<h1>Search results</h1>";
 			if (! $flagged == "") {
 				$flagged = applyFilter($flagged, $search);
-				printflagged($flagged);
+				if (! $flagged == "") {
+					printflagged($flagged);
+				} else {
+					echo "<p>No results matched the search criteria.</p>";
 				echo "<p><a href=\"index.php\">Back to index</a>";
 				echo "<br><a href=\"searchjobform\">Back to search</a></p>";
 			} else {
@@ -57,7 +60,8 @@
     $fifthFilter = "";
 
 		// Limit search fields.
-		switch ($_GET["fieldFilter"] == $i) {
+		$a = $_GET["fieldFilter"];
+		switch ($a) {
         case "any":
             $firstFilter = $flagged;
             break;
@@ -70,7 +74,8 @@
     }
 		
 		// Position type.
-		switch ($_GET["posFilter"] == $i) {
+		$b = $_GET["posFilter"];
+		switch ($b) {
         case "any":
             $secondFilter = $firstFilter;
             break;
@@ -83,7 +88,8 @@
     }
 		
 		// Contract type.
-		switch ($_GET["conFilter"] == $i) {
+		$c = $_GET["conFilter"];
+		switch ($c) {
         case "any":
             $thirdFilter = $secondFilter;
             break;
@@ -96,7 +102,8 @@
     }
 		
 		// Application type.
-		switch ($_GET["appFilter"] == $i) {
+		$d = $_GET["appFilter"];
+		switch ($d) {
         case "any":
             $fourthFilter = $thirdFilter;
             break;
