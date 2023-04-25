@@ -29,6 +29,8 @@
 			if (! $flagged == "") {
 				$flagged = applyFilter($flagged, $search);
 				printflagged($flagged);
+				echo "<p><a href=\"index.php\">Back to index</a>";
+				echo "<br><a href=\"searchjobform\">Back to search</a></p>";
 			} else {
 				echo "<p><em>No search results</em>";
 				echo "<br><a href=\"postjobform.php\">Add to the job listings</a>";
@@ -45,7 +47,7 @@
   }
 
 	
-	// Calls to distinct filters for each field, passing the narrowed list down through each statement.
+	// Calls distinct filters for each field, passing the narrowed list down through each statement.
 	function applyFilter($flagged, $search) {
     // this could be done with far fewer variables but it's way easier debugging separately.
     $firstFilter = "";
@@ -58,34 +60,32 @@
     if ($_GET["fieldFilter"] == "any") {
         $firstFilter = $flagged;
     } else {
-			// these should be using if ($_GET["fieldFilter"] == any/posID/title) instead of strpos.
-			// that way i can remove the checkfilter function.
-        if ($_GET["fieldFilter"] == "posID") {$i = 0; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
-        if ($_GET["fieldFilter"] == "title") {$i = 1; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
+        if ($_GET["fieldFilter"] == "posID") {$firstFilter = filterOne($flagged, $firstFilter, 0, $search);}
+        if ($_GET["fieldFilter"] == "title") {$firstFilter = filterOne($flagged, $firstFilter, 1, $search);}
     }
 
     // posType [Any/Full Time/Part Time].
     if ($_GET["posFilter"] == "any") {
         $secondFilter = $firstFilter;
     } else {
-        if ($_GET["posFilter"] == "fTime") {$i = "fTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
-        if ($_GET["posFilter"] == "pTime") {$i = "pTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
+        if ($_GET["posFilter"] == "fTime") {$secondFilter = filterTwo($firstFilter, $secondFilter, "fTime");}
+        if ($_GET["posFilter"] == "pTime") {$secondFilter = filterTwo($firstFilter, $secondFilter, "pTime");}
     }
     
     // conType [Any/Ongoing/Fixed Term].
     if ($_GET["conFilter"] == "any") {
         $thirdFilter = $secondFilter;
     } else {
-        if ($_GET["conFilter"] == "ongoing") {$i = "ongoing"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
-        if ($_GET["conFilter"] == "fixedTerm") {$i = "fixedTerm"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
+        if ($_GET["conFilter"] == "ongoing") {$thirdFilter = filterThree($secondFilter, $thirdFilter, "ongoing");}
+        if ($_GET["conFilter"] == "fixedTerm") {$thirdFilter = filterThree($secondFilter, $thirdFilter, "fixedTerm");}
     }
     
     // appType [Any/Postal/Email].
     if ($_GET["appFilter"] == "any") {
         $fourthFilter = $thirdFilter;
     } else {
-        if ($_GET["appFilter"] == "postal") {$i = 6; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
-        if ($_GET["appFilter"] == "email") {$i = 7; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
+        if ($_GET["appFilter"] == "postal") {$fourthFilter = filterFour($thirdFilter, $fourthFilter, 6);}
+        if ($_GET["appFilter"] == "email") {$fourthFilter = filterFour($thirdFilter, $fourthFilter, 7);}
     }
     
     // Location search.
@@ -99,7 +99,7 @@
 	}
 	
 	
-	
+	// Filters 1 through 5.
 	// Field search
 	function filterOne($flagged, $firstFilter, $i, $search) {
 		$filterJobArray = explode("\n", $flagged);
