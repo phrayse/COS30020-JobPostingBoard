@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="description" content="Job Search processing page" />
-  <meta name="keywords"    content="jobsearch, job, search" />
-  <meta name="author"      content="STUID, NAME" />
-  <!--link href="css/style.css" rel="stylesheet"/-->
-  <title>Search results</title>
+	<meta charset="utf-8" />
+	<meta name="description" content="Job Search processing page" />
+	<meta name="keywords"    content="jobsearch, job, search" />
+	<meta name="author"      content="STUID, NAME" />
+	<!--link href="css/style.css" rel="stylesheet"/-->
+	<title>Search results</title>
 </head>
 <body>
-  <?php
-  $filename = "../../data/jobposts/jobs.txt";
-  if (isset($_GET["search"])) {
-    if (file_exists($filename)) {
+	<?php
+	$filename = "../../data/jobposts/jobs.txt";
+	if (isset($_GET["search"])) {
+		if (file_exists($filename)) {
 			$search = $_GET["search"];
 			// Split all-jobs-in-one-line string into individual jobs.
 			$bigJobString = file_get_contents($filename);
@@ -24,7 +24,7 @@
 					// Any matches get added to the $flagged variable. 
 					$flagged .= "$job\n";
 				}
-    	}
+			}
 			echo "<h1>Search results</h1>";
 			if (! $flagged == "") {
 				$flagged = applyFilter($flagged, $search);
@@ -40,158 +40,150 @@
 				echo "<br><a href=\"postjobform.php\">Add to the job listings</a>";
 				echo "<br><a href=\"index.php\">Back to index</a></p>";
 			}
-    } else { 
+		} else { 
 			echo "<p><em>Error #10 - jobs.txt does not exist";
 			echo "<br><a href=\"index.php\">back to index</a></p>";
-    }
-  } else {
+		}
+	} else {
 		echo "<p><em>Error #11 - No search term entered</em>";
 		echo "<br><a href=\"index.php\">Back to index</a>";
 		echo "<br><a href=\"searchjobform\">Back to search</a></p>";
-  }
+	}
 
-	
+
 	// Calls distinct filters for each field, passing the narrowed list down through each statement.
 	function applyFilter($flagged, $search) {
-    // this could be done with far fewer variables but it's way easier debugging separately.
-    $firstFilter = "";
-    $secondFilter = "";
-    $thirdFilter = "";
-    $fourthFilter = "";
-    $fifthFilter = "";
-
 		// Limit search fields.
-		$a = $_GET["fieldFilter"];
-		switch ($a) {
-        case "any":
-            $firstFilter = $flagged;
-            break;
-        case "posID":
-            $firstFilter = filterOne($flagged, $firstFilter, 0, $search);
-            break;
-        case "title":
-            $firstFilter = filterOne($flagged, $firstFilter, 1, $search);
-            break;
-    }
+		$i = $_GET["fieldFilter"];
+		switch ($i) {
+            case "any":
+                break;
+            case "posID":
+                $flagged = filterOne($flagged, 0, $search);
+                break;
+            case "title":
+                $flagged = filterOne($flagged, 1, $search);
+                break;
+        }
 		
 		// Position type.
-		$b = $_GET["posFilter"];
-		switch ($b) {
-        case "any":
-            $secondFilter = $firstFilter;
-            break;
-        case "fTime":
-            $secondFilter = filterTwo($firstFilter, $secondFilter, "fTime");
-            break;
-        case "pTime":
-            $secondFilter = filterTwo($firstFilter, $secondFilter, "pTime");
-            break;
-    }
+		$i = $_GET["posFilter"];
+		switch ($i) {
+    		case "any":
+        		break;
+			case "fTime":
+				$flagged = filterTwo($flagged, "fullTime");
+				break;
+			case "pTime":
+				$flagged = filterTwo($flagged, "partTime");
+				break;
+		}
 		
 		// Contract type.
-		$c = $_GET["conFilter"];
-		switch ($c) {
-        case "any":
-            $thirdFilter = $secondFilter;
-            break;
-        case "ongoing":
-            $thirdFilter = filterThree($secondFilter, $thirdFilter, "ongoing");
-            break;
-        case "fixedTerm":
-            $thirdFilter = filterThree($secondFilter, $thirdFilter, "fixedTerm");
-            break;
-    }
+		$i = $_GET["conFilter"];
+		switch ($i) {
+			case "any":
+				break;
+			case "ongoing":
+				$flagged = filterThree($flagged, "ongoing");
+				break;
+			case "fixedTerm":
+				$flagged = filterThree($flagged, "fixedTerm");
+				break;
+		}
 		
 		// Application type.
-		$d = $_GET["appFilter"];
-		switch ($d) {
-        case "any":
-            $fourthFilter = $thirdFilter;
-            break;
-        case "postal":
-            $fourthFilter = filterFour($thirdFilter, $fourthFilter, 6);
-            break;
-        case "email":
-            $fourthFilter = filterFour($thirdFilter, $fourthFilter, 7);
-            break;
-    }
+		$i = $_GET["appFilter"];
+		switch ($i) {
+			case "any":
+				break;
+			case "postal":
+				$flagged = filterFour($flagged, 6);
+				break;
+			case "email":
+				$flagged = filterFour($flagged, 7);
+				break;
+		}
 		
 		// Location search.
-    if ($_GET["locationFilter"] == "any") {
-        $fifthFilter = $fourthFilter;
-    } else {
-        $fifthFilter = filterFive($fourthFilter, $fifthFilter, $_GET["locationFilter"]);
+    if (! $_GET["locationFilter"] == "any") {
+        $flagged = filterFive($flagged, $_GET["locationFilter"]);
     }
 
-    return $fifthFilter;
+    return $flagged;
 	}
 	
 	
 	// Filters 1 through 5.
 	// Field search
-	function filterOne($flagged, $firstFilter, $i, $search) {
+	function filterOne($flagged, $i, $search) {
 		$filterJobArray = explode("\n", $flagged);
-    foreach ($filterJobArray as $filterJob) {
+		$flagged = "";
+		foreach ($filterJobArray as $filterJob) {
 			$filterFieldArray = explode("\t", $filterJob);
-			if (! $filterFieldArray[$i] == NULL) {
-				if (! stripos($filterFieldArray[$i], $search) == FALSE) {
-					$firstFilter .= "$filterJob\n";
+			if ($filterFieldArray[0] != NULL) {
+				if (stripos($filterFieldArray[$i], $search) !== FALSE) {
+					$flagged .= "$filterJob\n";
 				}
 			}
-    }
-    return $firstFilter;
+		}
+		return $flagged;
 	}
 	// Position type
-	function filterTwo($firstFilter, $secondFilter, $i) {
-    $filterJobArray = explode("\n", $firstFilter);
-    foreach ($filterJobArray as $filterJob) {
-			$filterFieldArray = explode("\n", $filterJob);
-			if (! $filterFieldArray[0] == NULL) {
+	function filterTwo($flagged, $i) {
+		$filterJobArray = explode("\n", $flagged);
+		$flagged = "";
+		foreach ($filterJobArray as $filterJob) {
+			$filterFieldArray = explode("\t", $filterJob);
+			if ($filterFieldArray[0] != NULL) {
 				if ($filterFieldArray[4] == $i) {
-					$secondFilter .= "$filterJob\n";
+					$flagged .= "$filterJob\n";
 				}
 			}
-    }
-    return $secondFilter;
+		}
+		return $flagged;
 	}
 	// Contract type
-	function filterThree($secondFilter, $thirdFilter, $i) {
-    $filterJobArray = explode("\n", $secondFilter);
-    foreach ($filterJobArray as $filterJob) {
-			$filterFieldArray = explode("\n", $filterJob);
-			if (! $filterFieldArray[0] == NULL) {
+	function filterThree($flagged, $i) {
+		$filterJobArray = explode("\n", $flagged);
+		$flagged = "";
+		foreach ($filterJobArray as $filterJob) {
+			$filterFieldArray = explode("\t", $filterJob);
+			if ($filterFieldArray[0] != NULL) {
 				if ($filterFieldArray[5] == $i) {
-					$thirdFilter .= "$filterJob\n";
+					$flagged .= "$filterJob\n";
 				}
 			}
-    }
-    return $thirdFilter;
+		}
+		return $flagged;
 	}
 	// Application type
-	function filterFour($thirdFilter, $fourthFilter, $i) {
-    $filterJobArray = explode("\n", $thirdFilter);
-    foreach ($filterJobArray as $filterJob) {
-			$filterFieldArray = explode("\n", $filterJob);
-			if (! $filterFieldArray[0] == NULL) {
+	function filterFour($flagged, $i) {
+		$filterJobArray = explode("\n", $flagged);
+		$flagged = "";
+		foreach ($filterJobArray as $filterJob) {
+			$filterFieldArray = explode("\t", $filterJob);
+			if ($filterFieldArray[0] != NULL) {
 				if ($filterFieldArray[$i] == TRUE) {
-					$fourthFilter .= "$filterJob\n";
+					$flagged .= "$filterJob\n";
 				}
 			}
-    }
-    return $fourthFilter;
+		}
+		return $flagged;
 	}
 	// Location
-	function filterFive($fourthFilter, $fifthFilter, $i) {
-    $filterJobArray = explode("\n", $fourthFilter);
-    foreach ($filterJobArray as $filterJob) {
-			$filterFieldArray = explode("\n", $filterJob);
-			if (! $filterFieldArray[0] == NULL) {
+	function filterFive($flagged, $i) {
+		$filterJobArray = explode("\n", $flagged);
+		$flagged = "";
+		foreach ($filterJobArray as $filterJob) {
+			$filterFieldArray = explode("\t", $filterJob);
+			if ($filterFieldArray[0] != NULL) {
 				if ($filterFieldArray[8] == $i) {
-					$fifthFilter .= "$filterJob\n";
+					$flagged .= "$filterJob\n";
 				}
 			}
-    }
-    return $fifthFilter;
+		}
+		return $flagged;
 	}
 	
 	
@@ -203,11 +195,11 @@
 			echo "s";
 		}
 		echo ".</p>";
-		echo "<table>";
 		// Split each individual job into distinct fields.
 		foreach ($flagJobArray as $flagJob) {
 			$flagFieldArray = explode("\t", $flagJob);
 			if ($flagFieldArray[0] != NULL) {
+				echo "<table>";
 				echo "<tr><td>Position ID: $flagFieldArray[0]</tr></td>";
 				echo "<tr><td>Job title: $flagFieldArray[1]</tr></td>";
 				echo "<tr><td>Description: $flagFieldArray[2]</tr></td>";
@@ -226,10 +218,13 @@
 					}
 				}
 				echo "<tr><td>Location: $flagFieldArray[8]</tr></td>";
+				echo "</table>";
+				echo "<br>";
 			}
 		}
-		echo "</table>";
-  }
-  ?>
+		echo "<p><a href=\"index.php\">Back to index</a>";
+		echo "<br><a href=\"searchjobform.php\">Back to search</a></p>";
+	}
+	?>
 </body>
 </html>
