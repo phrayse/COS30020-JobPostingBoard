@@ -56,39 +56,59 @@
     $fourthFilter = "";
     $fifthFilter = "";
 
-    // Search specific fields [All/PosID/Title].
-    if ($_GET["fieldFilter"] == "any") {
-        $firstFilter = $flagged;
-    } else {
-        if ($_GET["fieldFilter"] == "posID") {$firstFilter = filterOne($flagged, $firstFilter, 0, $search);}
-        if ($_GET["fieldFilter"] == "title") {$firstFilter = filterOne($flagged, $firstFilter, 1, $search);}
+		// Limit search fields.
+		switch ($_GET["fieldFilter"] == $i) {
+        case "any":
+            $firstFilter = $flagged;
+            break;
+        case "posID":
+            $firstFilter = filterOne($flagged, $firstFilter, 0, $search);
+            break;
+        case "title":
+            $firstFilter = filterOne($flagged, $firstFilter, 1, $search);
+            break;
     }
-
-    // posType [Any/Full Time/Part Time].
-    if ($_GET["posFilter"] == "any") {
-        $secondFilter = $firstFilter;
-    } else {
-        if ($_GET["posFilter"] == "fTime") {$secondFilter = filterTwo($firstFilter, $secondFilter, "fTime");}
-        if ($_GET["posFilter"] == "pTime") {$secondFilter = filterTwo($firstFilter, $secondFilter, "pTime");}
+		
+		// Position type.
+		switch ($_GET["posFilter"] == $i) {
+        case "any":
+            $secondFilter = $firstFilter;
+            break;
+        case "fTime":
+            $secondFilter = filterTwo($firstFilter, $secondFilter, "fTime");
+            break;
+        case "pTime":
+            $secondFilter = filterTwo($firstFilter, $secondFilter, "pTime");
+            break;
     }
-    
-    // conType [Any/Ongoing/Fixed Term].
-    if ($_GET["conFilter"] == "any") {
-        $thirdFilter = $secondFilter;
-    } else {
-        if ($_GET["conFilter"] == "ongoing") {$thirdFilter = filterThree($secondFilter, $thirdFilter, "ongoing");}
-        if ($_GET["conFilter"] == "fixedTerm") {$thirdFilter = filterThree($secondFilter, $thirdFilter, "fixedTerm");}
+		
+		// Contract type.
+		switch ($_GET["conFilter"] == $i) {
+        case "any":
+            $thirdFilter = $secondFilter;
+            break;
+        case "ongoing":
+            $thirdFilter = filterThree($secondFilter, $thirdFilter, "ongoing");
+            break;
+        case "fixedTerm":
+            $thirdFilter = filterThree($secondFilter, $thirdFilter, "fixedTerm");
+            break;
     }
-    
-    // appType [Any/Postal/Email].
-    if ($_GET["appFilter"] == "any") {
-        $fourthFilter = $thirdFilter;
-    } else {
-        if ($_GET["appFilter"] == "postal") {$fourthFilter = filterFour($thirdFilter, $fourthFilter, 6);}
-        if ($_GET["appFilter"] == "email") {$fourthFilter = filterFour($thirdFilter, $fourthFilter, 7);}
+		
+		// Application type.
+		switch ($_GET["appFilter"] == $i) {
+        case "any":
+            $fourthFilter = $thirdFilter;
+            break;
+        case "postal":
+            $fourthFilter = filterFour($thirdFilter, $fourthFilter, 6);
+            break;
+        case "email":
+            $fourthFilter = filterFour($thirdFilter, $fourthFilter, 7);
+            break;
     }
-    
-    // Location search.
+		
+		// Location search.
     if ($_GET["locationFilter"] == "any") {
         $fifthFilter = $fourthFilter;
     } else {
