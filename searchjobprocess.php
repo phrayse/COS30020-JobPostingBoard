@@ -32,8 +32,9 @@
 					printflagged($flagged);
 				} else {
 					echo "<p>No results matched the search criteria.</p>";
-				echo "<p><a href=\"index.php\">Back to index</a>";
-				echo "<br><a href=\"searchjobform\">Back to search</a></p>";
+					echo "<p><a href=\"index.php\">Back to index</a>";
+					echo "<br><a href=\"searchjobform\">Back to search</a></p>";
+				}
 			} else {
 				echo "<p><em>No search results</em>";
 				echo "<br><a href=\"postjobform.php\">Add to the job listings</a>";
