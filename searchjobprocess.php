@@ -27,11 +27,7 @@
     	}
 			echo "<h1>Search results</h1>";
 			if (! $flagged == "") {
-				$filter = "";
-				$filter = checkFilter($filter);
-				if (! $filter == "") {
-					$flagged = applyFilter($flagged, $filter, $search);
-				}
+				$flagged = applyFilter($flagged, $search);
 				printflagged($flagged);
 			} else {
 				echo "<p><em>No search results</em>";
@@ -48,33 +44,9 @@
 		echo "<br><a href=\"searchjobform\">Back to search</a></p>";
   }
 
-	// This is unnecessary - should be integrated into applyFilter().
-	function checkFilter($filter) {
-    if ($_GET["fieldFilter"] == "any") {$filter .= "00;";}
-    if ($_GET["fieldFilter"] == "posID") {$filter .= "01;";}
-    if ($_GET["fieldFilter"] == "title") {$filter .= "02;";}
-
-    if ($_GET["posFilter"] == "any") {$filter .= "10;";}
-    if ($_GET["posFilter"] == "fTime") {$filter .= "11;";}
-    if ($_GET["posFilter"] == "pTime") {$filter .= "12;";}
-
-    if ($_GET["conFilter"] == "any") {$filter .= "20;";}
-    if ($_GET["conFilter"] == "ongoing") {$filter .= "21;";}
-    if ($_GET["conFilter"] == "fixedTerm") {$filter .= "22;";}
-
-    if ($_GET["appFilter"] == "any") {$filter .= "30;";}
-    if ($_GET["appFilter"] == "postal") {$filter .= "31;";}
-    if ($_GET["appFilter"] == "email") {$filter .= "32;";}
-		
-		if (! $_GET["locationFilter"] == "any") {$filter .= "40;";}
 	
-		return $filter;
-	}
-	
-	
-	
-	//
-	function applyFilter($flagged, $filter, $search) {
+	// Calls to distinct filters for each field, passing the narrowed list down through each statement.
+	function applyFilter($flagged, $search) {
     // this could be done with far fewer variables but it's way easier debugging separately.
     $firstFilter = "";
     $secondFilter = "";
@@ -83,45 +55,44 @@
     $fifthFilter = "";
 
     // Search specific fields [All/PosID/Title].
-    if (! strpos($filter, "00;") == FALSE) {
+    if ($_GET["fieldFilter"] == "any") {
         $firstFilter = $flagged;
     } else {
 			// these should be using if ($_GET["fieldFilter"] == any/posID/title) instead of strpos.
 			// that way i can remove the checkfilter function.
-        if (! strpos($filter, "01;") == FALSE) {$i = 0; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
-        if (! strpos($filter, "02;") == FALSE) {$i = 1; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
+        if ($_GET["fieldFilter"] == "posID") {$i = 0; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
+        if ($_GET["fieldFilter"] == "title") {$i = 1; $firstFilter = filterOne($flagged, $firstFilter, $i, $search);}
     }
 
     // posType [Any/Full Time/Part Time].
-    if (! strpos($filter, "10;") == FALSE) {
+    if ($_GET["posFilter"] == "any") {
         $secondFilter = $firstFilter;
     } else {
-        if (! strpos($filter, "11;") == FALSE) {$i = "fTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
-        if (! strpos($filter, "12;") == FALSE) {$i = "pTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
+        if ($_GET["posFilter"] == "fTime") {$i = "fTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
+        if ($_GET["posFilter"] == "pTime") {$i = "pTime"; $secondFilter = filterTwo($firstFilter, $secondFilter, $i);}
     }
     
     // conType [Any/Ongoing/Fixed Term].
-    if (! strpos($filter, "20;") == FALSE) {
+    if ($_GET["conFilter"] == "any") {
         $thirdFilter = $secondFilter;
     } else {
-        if (! strpos($filter, "21;") == FALSE) {$i = "ongoing"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
-        if (! strpos($filter, "22;") == FALSE) {$i = "fixedTerm"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
+        if ($_GET["conFilter"] == "ongoing") {$i = "ongoing"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
+        if ($_GET["conFilter"] == "fixedTerm") {$i = "fixedTerm"; $thirdFilter = filterThree($secondFilter, $thirdFilter, $i);}
     }
     
     // appType [Any/Postal/Email].
-    if (! strpos($filter, "30;") == FALSE) {
+    if ($_GET["appFilter"] == "any") {
         $fourthFilter = $thirdFilter;
     } else {
-        if (! strpos($filter, "31;") == FALSE) {$i = 6; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
-        if (! strpos($filter, "32;") == FALSE) {$i = 7; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
+        if ($_GET["appFilter"] == "postal") {$i = 6; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
+        if ($_GET["appFilter"] == "email") {$i = 7; $fourthFilter = filterFour($thirdFilter, $fourthFilter, $i);}
     }
     
     // Location search.
-    if (strpos($filter, "40;") == FALSE) {
+    if ($_GET["locationFilter"] == "any") {
         $fifthFilter = $fourthFilter;
     } else {
-        $i = $_GET["locationFilter"];
-        $fifthFilter = filterFive($fourthFilter, $fifthFilter, $i);
+        $fifthFilter = filterFive($fourthFilter, $fifthFilter, $_GET["locationFilter"]);
     }
 
     return $fifthFilter;
@@ -129,7 +100,7 @@
 	
 	
 	
-	//
+	// Field search
 	function filterOne($flagged, $firstFilter, $i, $search) {
 		$filterJobArray = explode("\n", $flagged);
     foreach ($filterJobArray as $filterJob) {
@@ -142,7 +113,7 @@
     }
     return $firstFilter;
 	}
-
+	// Position type
 	function filterTwo($firstFilter, $secondFilter, $i) {
     $filterJobArray = explode("\n", $firstFilter);
     foreach ($filterJobArray as $filterJob) {
@@ -155,7 +126,7 @@
     }
     return $secondFilter;
 	}
-
+	// Contract type
 	function filterThree($secondFilter, $thirdFilter, $i) {
     $filterJobArray = explode("\n", $secondFilter);
     foreach ($filterJobArray as $filterJob) {
@@ -168,7 +139,7 @@
     }
     return $thirdFilter;
 	}
-
+	// Application type
 	function filterFour($thirdFilter, $fourthFilter, $i) {
     $filterJobArray = explode("\n", $thirdFilter);
     foreach ($filterJobArray as $filterJob) {
@@ -181,7 +152,7 @@
     }
     return $fourthFilter;
 	}
-
+	// Location
 	function filterFive($fourthFilter, $fifthFilter, $i) {
     $filterJobArray = explode("\n", $fourthFilter);
     foreach ($filterJobArray as $filterJob) {
