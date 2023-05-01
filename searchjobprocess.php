@@ -188,7 +188,7 @@
 	
 	
 	// Print all results in a table.
-  function printFlagged($flagged) {
+    function printFlagged($flagged) {
 		$flagJobArray = explode("\n", $flagged);
 		echo "<p>Your search matched " .(count($flagJobArray)-1) ." listing";
 		if (count($flagJobArray) > 2) {
@@ -196,32 +196,39 @@
 		}
 		echo ".</p>";
 		// Split each individual job into distinct fields.
+		$output = "";
 		foreach ($flagJobArray as $flagJob) {
 			$flagFieldArray = explode("\t", $flagJob);
-			if ($flagFieldArray[0] != NULL) {
-				echo "<table>";
-				echo "<tr><td>Position ID: $flagFieldArray[0]</tr></td>";
-				echo "<tr><td>Job title: $flagFieldArray[1]</tr></td>";
-				echo "<tr><td>Description: $flagFieldArray[2]</tr></td>";
-				echo "<tr><td>Closing date: $flagFieldArray[3]</tr></td>";
-				echo "<tr><td>Position: $flagFieldArray[4]</tr></td>";
-				echo "<tr><td>Contract: $flagFieldArray[5]</tr></td>";
-				// There's gotta be a way cleaner way than this but whatever.
-				if (($flagFieldArray[6] == TRUE) && ($flagFieldArray[7] == TRUE)) {
-					echo "<tr><td>Application by post or email.</tr></td>";
-				} else {
-					if ($flagFieldArray[6] == TRUE) {
-						echo "<tr><td>Application by post only.</tr></td>";
+			// Check for null, false, or empty string.
+			if (!empty($flagFieldArray[0])) {
+				// Concatenate HTML outputs to $output variable to reduce echo calls.
+				$output .= 	"<table>".
+							"<tr>".
+							"<td>".
+							"<p><strong>Position ID:</strong> {$flagFieldArray[0]}</p>".
+							"<p><strong>Job Title:</strong> {$flagFieldArray[1]}</p>".
+							"<p><strong>Description:</strong> {$flagFieldArray[2]}</p>".
+							"<p><strong>Closing Date:</strong> {$flagFieldArray[3]}</p>".
+							"<p><strong>Position:</strong> {$flagFieldArray[4]}</p>".
+							"<p><strong>Contract:</strong> {$flagFieldArray[5]}</p>".
+							"<p><strong>Location:</strong> {$flagFieldArray[8]}</p>".
+							"<p><strong>Apply via:</strong> ";
+				if ($flagFieldArray[6]) {
+					$output .= "Post";
+					if ($flagFieldArray[7]) {
+						$output .= " & Email";
 					}
-					if ($flagFieldArray[7] == TRUE) {
-						echo "<tr><td>Application by email only.</tr></td>";
-					}
+				} elseif ($flagFieldArray[7]) {
+					$output .= "Email";
 				}
-				echo "<tr><td>Location: $flagFieldArray[8]</tr></td>";
-				echo "</table>";
-				echo "<br>";
+				$output .= 	"</p>".
+							"</td>".
+							"</tr>".
+							"</table>".
+							"<br>";
 			}
 		}
+		echo $output;
 		echo "<p><a href=\"index.php\">Back to index</a>";
 		echo "<br><a href=\"searchjobform.php\">Back to search</a></p>";
 	}
