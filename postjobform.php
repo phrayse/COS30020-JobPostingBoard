@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="description" content="Job Search Post page" />
-	<meta name="keywords"    content="post, job, form" />
-  <!-- Make sure to update stuid and name before submission --> 
+	<meta charset="utf-8" />
+	<meta name="description" content="Job Post page" />
+	<meta name="keywords"    content="post, job" />
 	<meta name="author"      content="STUID, NAME" />
-	<!--link href="css/style.css" rel="stylesheet"/-->
+	<link href="style.css" rel="stylesheet" />
 	<title>JobSearch Post Job</title>
 </head>
 <body>
@@ -18,7 +17,7 @@
 				<!-- Position ID. Text input type, NOT NULL, should be unique. 5 characters, P and four numbers -->
 				<!-- Should this not be automatically set by server, not user? That way can autoassign unique ID -->
 				<p><label>Position ID:
-					<input id="posID" type="text" name="posID" pattern="^P\d{4}$" required/>
+					<input id="posID" type="text" name="posID" placeholder="P####" pattern="^P\d{4}$" required/>
 				</label></p>
 
 				<!-- Title. Text input type, NOT NULL. Max 20 alphanumeric incl. [ ,.!] -->
@@ -81,7 +80,7 @@
 				</p>
 
 				<!-- Requirement 3: Link to return to the Home page is provided -->
-				<p>All fields are required. <a href="index.php">Return to Home Page</a></p>
+				<p>All fields are required. <a href="index.php">Return to Home Page</a>, or <a href="jobsearchform.php">Search existing posts</a>.</p>
 			</fieldset>
 		</form>
   </main>

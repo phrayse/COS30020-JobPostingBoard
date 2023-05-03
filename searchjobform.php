@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<meta name="description" content="Job Vacancy Search page" />
-	<meta name="keywords"    content="jobsearch, job, search" />
+	<meta name="description" content="Job Search page" />
+	<meta name="keywords"    content="job, search" />
 	<meta name="author"      content="STUID, NAME" />
-	<!--link href="css/style.css" rel="stylesheet"/-->
+	<link href="style.css" rel="stylesheet" />
 	<title>Search Job Vacancies</title>
 </head>
 <body>
@@ -41,17 +41,17 @@
             <br>
             <strong>Location:</strong>
                 <label for="locationFilter">Location:</label>
-										<select id="locationFilter" name="locationFilter" required>
-												<option value="any" selected>Any</option>
-												<option value="ACT">ACT</option>
-												<option value="NSW">NSW</option>
-												<option value="NT">NT</option>
-												<option value="QLD">QLD</option>
-												<option value="SA">SA</option>
-												<option value="TAS">TAS</option>
-												<option value="VIC">VIC</option>
-												<option value="WA">WA</option>
-										</select>
+					<select id="locationFilter" name="locationFilter" required>
+						<option value="any" selected>Any</option>
+						<option value="ACT">ACT</option>
+						<option value="NSW">NSW</option>
+						<option value="NT">NT</option>
+						<option value="QLD">QLD</option>
+						<option value="SA">SA</option>
+						<option value="TAS">TAS</option>
+						<option value="VIC">VIC</option>
+						<option value="WA">WA</option>
+					</select>
             </p>
             
             <input type="submit" value="submit" />

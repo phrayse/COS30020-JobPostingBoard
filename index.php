@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="description" content="Job Search index page" />
-	<meta name="keywords"    content="jobsearch, job, search" />
-	<meta name="author"      content="STUID, NAME" />
-	<!--link href="css/style.css" rel="stylesheet"/-->
-	<title>JobSearch Index</title>
+    <meta name="keywords"    content="index" />
+    <meta name="author"      content="STUID, NAME" />
+    <link href="style.css" rel="stylesheet" />
+    <title>JobSearch Index</title>
 </head>
 <body>
     <p>

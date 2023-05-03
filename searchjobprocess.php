@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<meta name="description" content="Job Search processing page" />
-	<meta name="keywords"    content="jobsearch, job, search" />
+	<meta name="description" content="Job Search Results" />
+	<meta name="keywords"    content="job, search, results" />
 	<meta name="author"      content="STUID, NAME" />
-	<!--link href="css/style.css" rel="stylesheet"/-->
-	<title>Search results</title>
+	<link href="style.css" rel="stylesheet" />
+	<title>Search Results</title>
 </head>
 <body>
 	<?php
@@ -18,18 +18,35 @@
 			$bigJobString = file_get_contents($filename);
 			$jobArray = explode("\n", $bigJobString);
 			$flagged = "";
+			$currentDate = time();
+
 			// Iterate through each individual job listing.
 			foreach ($jobArray as $job) {
-				if (stripos($job, $search) !== FALSE) {
-					// Any matches get added to the $flagged variable. 
-					$flagged .= "$job\n";
+				// Limit search terms to the PosID, Title, and Description
+				$subjob = array_slice(explode("\t", $job), 0, 3);
+				$subjobString = implode("\t", $subjob);
+				// Convert closedate element to Unix timestamp, then compare to current date.
+				$jobDate = strtotime(DateTime::createFromFormat('d/m/y', explode("\t", $job)[3])->format('Y-m-d'));
+				if ($jobDate >= $currentDate) {
+					if (stripos($subjobString, $search) !== FALSE) {
+						// Any matches get added to the $flagged variable. 
+						$flagged .= "$job\n";
+					}
 				}
 			}
+
 			echo "<h1>Search results</h1>";
-			if (! $flagged == "") {
+			if (!empty($flagged)) {
 				$flagged = applyFilter($flagged, $search);
-				if (! $flagged == "") {
-					printflagged($flagged);
+				if (!empty($flagged)) {
+					$flaggedArray = explode("\n", $flagged);
+					$flaggedArray = array_filter($flaggedArray);
+					usort($flaggedArray, function($a, $b) {
+						$dateA = strtotime(DateTime::createFromFormat('d/m/y', explode("\t", $a)[3])->format('Y-m-d'));
+						$dateB = strtotime(DateTime::createFromFormat('d/m/y', explode("\t", $b)[3])->format('Y-m-d'));
+						return $dateA - $dateB;
+					});
+					printflagged(implode("\n", $flaggedArray));
 				} else {
 					echo "<p>No results matched the search criteria.</p>";
 					echo "<p><a href=\"index.php\">Back to index</a>";
@@ -106,11 +123,10 @@
 		}
 		
 		// Location search.
-    if (! $_GET["locationFilter"] == "any") {
-        $flagged = filterFive($flagged, $_GET["locationFilter"]);
-    }
-
-    return $flagged;
+		if (! $_GET["locationFilter"] == "any") {
+			$flagged = filterFive($flagged, $_GET["locationFilter"]);
+		}
+    	return $flagged;
 	}
 	
 	
@@ -190,8 +206,8 @@
 	// Print all results in a table.
     function printFlagged($flagged) {
 		$flagJobArray = explode("\n", $flagged);
-		echo "<p>Your search matched " .(count($flagJobArray)-1) ." listing";
-		if (count($flagJobArray) > 2) {
+		echo "<p>Your search matched " .(count($flagJobArray)) ." listing";
+		if (count($flagJobArray) != 1) {
 			echo "s";
 		}
 		echo ".</p>";
