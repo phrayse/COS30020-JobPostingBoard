@@ -1,5 +1,5 @@
-# 23tp1awd2
-COS30020 Advanced Web Development Assignment 2: System Development project 1  
+# COS30020 Advanced Web Development Assignment 2: System Development project 1
+### Job Posting System
 **Grade received: 92/100.**  
 -3 points for no CSS stylesheet;  
 -5 points for not implementing the cut-off date on search results.
