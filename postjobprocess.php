@@ -26,7 +26,7 @@
 
 	if (!$applicationByPost && !$applicationByEmail) {
 		echo "<p>Please ensure all form fields have been filled.</p>";
-		echo "$backToForm;
+		echo $backToForm;
 	} else {
 		// initialise variables from form.
 		$posID = sanitise($_POST["posID"]);
