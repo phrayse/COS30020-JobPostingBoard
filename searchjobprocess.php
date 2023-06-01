@@ -1,3 +1,4 @@
+<!-- this page is fucked somewhere, the search results aren't getting cut off by current date. I'll fix it at some point -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,10 @@
 			$jobArray = explode("\n", $bigJobString);
 			$flagged = "";
 			$currentDate = time();
+
+			$toIndex = "<p><a href=\"index.php\">Back to Index</a></p>";
+			$toSearch = "<p><a href=\"searchjobform.php\">Back to Search</a></p>";
+			$toPost = "<p><a href=\"postjobform.php\">Add to the job listings</a></p>";
 
 			// Iterate through each individual job listing.
 			foreach ($jobArray as $job) {
@@ -48,23 +53,24 @@
 					});
 					printflagged(implode("\n", $flaggedArray));
 				} else {
+					// this whole else-chain can probs be cut down entirely
 					echo "<p>No results matched the search criteria.</p>";
-					echo "<p><a href=\"index.php\">Back to index</a>";
-					echo "<br><a href=\"searchjobform\">Back to search</a></p>";
+					echo $toIndex;
+					echo $toSearch;
 				}
 			} else {
 				echo "<p><em>No search results</em>";
-				echo "<br><a href=\"postjobform.php\">Add to the job listings</a>";
-				echo "<br><a href=\"index.php\">Back to index</a></p>";
+				echo $toIndex;
+				echo $toPost;
 			}
 		} else { 
 			echo "<p><em>Error #10 - jobs.txt does not exist";
-			echo "<br><a href=\"index.php\">back to index</a></p>";
+			echo $toIndex;
 		}
 	} else {
 		echo "<p><em>Error #11 - No search term entered</em>";
-		echo "<br><a href=\"index.php\">Back to index</a>";
-		echo "<br><a href=\"searchjobform\">Back to search</a></p>";
+		echo $toIndex;
+		echo $toSearch;
 	}
 
 
@@ -202,7 +208,6 @@
 		return $flagged;
 	}
 	
-	
 	// Print all results in a table.
     function printFlagged($flagged) {
 		$flagJobArray = explode("\n", $flagged);
@@ -245,8 +250,8 @@
 			}
 		}
 		echo $output;
-		echo "<p><a href=\"index.php\">Back to index</a>";
-		echo "<br><a href=\"searchjobform.php\">Back to search</a></p>";
+		echo $toIndex;
+		echo $toSearch;
 	}
 	?>
 </body>
